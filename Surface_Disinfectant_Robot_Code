@@ -1,0 +1,122 @@
+CODE:
+/*
+ * Problem statement: To make the robot capable of driving autonomously by detecting obstacles on its path and releasing sanitizer via pump.
+ * Code Author: Ayush Jain(0187EC171010), Deepika Vishkarma(0187EX171017), Sthuti Tiwari(0187EC171046), Toor Sharif(0187EC171050)
+ * Department of Electronics and Communication, SISTec - Gandhi Nagar, Bhopal MP.
+ * 
+*/
+
+//Declaring all the variables used in the program
+int ENA=A0,ENB=A3,IN1=6,IN2=7,IN3=A2,IN4=A1;
+//In1 IN2 Right Motors
+int i1 = 12,i2=11,i3=10;
+int left = 11, middle = 10, right= 12;
+#define pump 8
+#define buzz A5
+#define led 13
+void setup()
+{
+  //Defining the state of the pins to o/p or i/p.
+  pinMode(pump, OUTPUT);
+  pinMode(left,INPUT);
+  pinMode(middle,INPUT);
+  pinMode(right,INPUT);
+  pinMode(led,OUTPUT);
+  pinMode(buzz, OUTPUT);
+  pinMode(ENA,OUTPUT);
+  pinMode(ENB,OUTPUT);
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  pinMode(IN3,OUTPUT);
+  pinMode(IN4,OUTPUT);
+  Serial.begin(9600); 
+  //Starting procedure
+  digitalWrite(buzz,HIGH);
+  digitalWrite(led,HIGH);
+  delay(300);
+  digitalWrite(buzz,LOW);
+  delay(300);
+  digitalWrite(buzz,HIGH);
+  delay(300);
+  digitalWrite(led,LOW);
+  digitalWrite(buzz,LOW);
+  delay(300);
+  analogWrite(ENA, 500);
+  analogWrite(ENB, 500);
+}
+void mov(char z){
+  //Switch case according to sensor values
+  switch (z){
+    case 'f':
+    digitalWrite(led,HIGH);
+    digitalWrite(IN1,HIGH);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN3,HIGH);
+    digitalWrite(IN4,LOW);
+    digitalWrite(buzz, LOW);
+    digitalWrite(pump, HIGH);
+    break;
+    case 'r':
+    digitalWrite(led,LOW);
+    digitalWrite(IN1,HIGH);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN3,LOW);
+    digitalWrite(IN4,LOW);
+    digitalWrite(buzz, HIGH);    
+    digitalWrite(pump, LOW);
+    break;
+    case 'l':
+    digitalWrite(led,LOW);
+    digitalWrite(IN1,LOW);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN3,HIGH);
+    digitalWrite(IN4,LOW);
+    digitalWrite(buzz, HIGH);
+    digitalWrite(pump, LOW);
+    break;
+    case 'b':
+    digitalWrite(IN1,LOW);
+    digitalWrite(IN2,HIGH);
+    digitalWrite(IN3,LOW);
+    digitalWrite(IN4,HIGH);
+    digitalWrite(led,HIGH);
+    digitalWrite(buzz, HIGH);
+    digitalWrite(pump, LOW);
+    delay(2000);   
+    digitalWrite(IN1,HIGH);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN3,LOW);
+    digitalWrite(IN4,LOW);
+    digitalWrite(led,LOW);
+    digitalWrite(buzz, LOW);
+    delay(2000);
+    break;
+    
+    default:
+    digitalWrite(IN1,LOW);
+    digitalWrite(IN3,LOW);
+    digitalWrite(IN2,LOW);
+    digitalWrite(IN4,LOW);
+    digitalWrite(buzz, LOW);
+    digitalWrite(pump, LOW);
+    break;
+  }
+}
+int iLeft,iMiddle,iRight;
+void loop()
+{
+  //Read all sensors in every loop and function accordingly
+    iLeft = digitalRead(left);
+    iMiddle = digitalRead(middle);
+    iRight = digitalRead(right);
+
+    if(iLeft==HIGH && iMiddle==HIGH && iRight==HIGH)
+      mov('f');
+    if(iLeft==LOW && iMiddle==HIGH && iRight ==HIGH)
+      mov('l');
+    if(iLeft==HIGH && iMiddle ==HIGH && iRight==LOW)
+      mov('r');
+    if(iLeft==LOW && iMiddle==LOW && iRight==LOW)
+      mov('b');
+      
+}
